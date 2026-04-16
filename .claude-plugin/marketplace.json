@@ -1,0 +1,24 @@
+{
+  "name": "how",
+  "owner": {
+    "name": "Lauren Tan",
+    "url": "https://github.com/poteto"
+  },
+  "plugins": [
+    {
+      "name": "how",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Explain how a subsystem works by spawning parallel explorer agents, synthesizing findings into a clear architectural explanation, and optionally running an architectural critique pass.",
+      "category": "code-analysis",
+      "keywords": ["explanation", "architecture", "code-review", "onboarding", "exploration", "critique"],
+      "author": {
+        "name": "Lauren Tan",
+        "url": "https://github.com/poteto"
+      },
+      "repository": "https://github.com/poteto/how",
+      "license": "MIT",
+      "skills": ["./skills/how-claude"]
+    }
+  ]
+}
