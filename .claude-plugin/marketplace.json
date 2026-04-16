@@ -18,7 +18,7 @@
       },
       "repository": "https://github.com/poteto/how",
       "license": "MIT",
-      "skills": ["./skills/how-claude"]
+      "skills": ["./skills/how"]
     }
   ]
 }

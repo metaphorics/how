@@ -7,7 +7,7 @@ A plugin for Cursor and Claude Code that adds the `/how` skill: ask how a subsys
 Two modes, picked automatically from your question:
 
 - **Explain** (default) — explore the codebase and produce a structured explanation with sections for Overview, Key Concepts, How It Works, Where Things Live, and Gotchas.
-- **Critique** — explain first, then spawn multiple independent critics across different models to surface architectural problems.
+- **Critique** — explain first, then spawn multiple independent critics to surface architectural problems.
 
 For complex questions that span multiple files or services, the skill decomposes the question into 2–4 parallel exploration angles and spawns explorer subagents that gather findings in parallel. A synthesis agent then reconciles their findings into a single coherent explanation. Simple questions skip the fan-out and run end-to-end in a single agent.
 
@@ -25,16 +25,10 @@ how/
 ├── .cursor-plugin/
 │   └── plugin.json          # Cursor manifest
 ├── .claude-plugin/
-│   └── plugin.json          # Claude Code manifest
+│   ├── plugin.json          # Claude Code manifest
+│   └── marketplace.json     # Marketplace metadata
 └── skills/
-    ├── how/                  # Cursor skill
-    │   ├── SKILL.md
-    │   └── references/
-    │       ├── explainer-prompt.md
-    │       ├── explorer-prompt.md
-    │       ├── critic-prompt.md
-    │       └── critique-rubric.md
-    └── how-claude/           # Claude Code skill
+    └── how/
         ├── SKILL.md
         └── references/
             ├── explainer-prompt.md
@@ -45,10 +39,6 @@ how/
 
 `SKILL.md` contains the top-level routing logic (simple vs. complex, explain vs. critique). The `references/` folder holds the prompt templates that the agent hands to each subagent, plus the critique rubric used during the critique pass.
 
-### Model differences
-
-The Cursor skill uses multi-model dispatching (`gpt-5.4`, `composer-2`, `claude-opus-4.6`). The Claude Code skill uses Claude-native models (`sonnet`, `opus`, `haiku`) which are the only values accepted by the Claude Code Agent tool.
-
 ## Installation
 
 ### Cursor
@@ -57,7 +47,7 @@ Install as a Cursor plugin — the `.cursor-plugin/` manifest is picked up autom
 
 ### Claude Code
 
-Install the plugin directory locally. The `.claude-plugin/` manifest enables auto-discovery of the `how-claude` skill.
+Install the plugin directory locally. The `.claude-plugin/` manifest enables auto-discovery of the `how` skill.
 
 ## License
 

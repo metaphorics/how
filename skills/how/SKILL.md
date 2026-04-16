@@ -10,7 +10,7 @@ Explore the codebase to answer "how does X work?" questions. Produce clear archi
 Two modes:
 
 1. **Explain** (default) — explore the codebase and produce a clear explanation
-2. **Critique** — explain first, then spawn multiple models to independently identify architectural issues
+2. **Critique** — explain first, then spawn multiple independent critics to identify architectural issues
 
 ## Explain Mode
 
@@ -42,17 +42,11 @@ Decompose the question into 2-4 parallel exploration angles. Each angle should c
 
 The right decomposition depends on the question — use your judgment. For narrow questions, 2 explorers is fine. For broad subsystems, use up to 4.
 
-Spawn all explorers in a single message:
-
-- `subagent_type`: `generalPurpose`
-- `model`: `gpt-5.4`
-- `readonly`: `true`
-
-Each explorer gets the same base prompt from `references/explorer-prompt.md`, plus a specific exploration angle telling it which slice to focus on. Each explorer should:
+Spawn all explorers in parallel. Each explorer gets the same base prompt from `references/explorer-prompt.md`, plus a specific exploration angle telling it which slice to focus on. Each explorer should:
 - Start broad: Glob for relevant directories, Grep for key types/interfaces/class names
 - Follow the thread: once you find an entry point, trace the call chain — callers, callees, data flow, type definitions
 - Read the actual code, don't guess from file names
-- Stop when you can describe the full path from input to output (or from trigger to effect) without hand-waving any step
+- Stop when it can describe the full path from input to output (or from trigger to effect) without hand-waving any step
 - Note things that are surprising, non-obvious, or that a newcomer would get wrong
 
 Each explorer returns structured findings: the components it found, the flow it traced, the files it read, and anything non-obvious. Overlap between explorers is fine — the explainer will reconcile.
@@ -61,11 +55,7 @@ Then proceed to Step 3.
 
 ### Step 2b — Direct Explain (simple questions)
 
-Spawn a single Task subagent that explores and explains in one pass:
-
-- `subagent_type`: `generalPurpose`
-- `model`: `claude-opus-4.6`
-- `readonly`: `true`
+Spawn a single subagent that explores and explains in one pass.
 
 This agent does its own exploration (Glob, Grep, Read) and writes the explanation directly. Read `references/explainer-prompt.md` for the communication style and output format — the agent follows the same structure, it just doesn't have explorer findings as input.
 
@@ -73,11 +63,7 @@ Proceed to Step 4.
 
 ### Step 3 — Synthesize (complex questions only)
 
-Once all explorers have returned, spawn a single Task subagent to synthesize their findings into one coherent explanation:
-
-- `subagent_type`: `generalPurpose`
-- `model`: `claude-opus-4.6`
-- `readonly`: `true`
+Once all explorers have returned, spawn a single subagent to synthesize their findings into one coherent explanation.
 
 The explainer gets all explorers' findings and writes the human-facing explanation (see output format below). Read `references/explainer-prompt.md` for the full prompt template. The explainer reconciles overlapping findings, resolves contradictions, and weaves the separate slices into a unified picture.
 
@@ -109,18 +95,11 @@ Run the full explain flow above (Steps 1-4). You need to understand the architec
 
 ### Step 2 — Spawn Critics
 
-After the explanation is complete, spawn architectural critics. Launch all in a single message:
+After the explanation is complete, spawn three architectural critics in parallel, each with a distinct analytical role:
 
-| Subagent | Model |
-|----------|-------|
-| Critic A | `claude-opus-4.6` |
-| Critic B | `composer-2` |
-| Critic C | `gpt-5.4` |
-
-For each critic:
-- `subagent_type`: `generalPurpose`
-- `model`: the model from the table. These are starting suggestions — escalate to a higher reasoning tier of the same model family when the architecture warrants deeper analysis.
-- `readonly`: `true`
+- **Critic A — Deep analysis**: Focuses on structural integrity, abstraction boundaries, and systemic risks. Best equipped to identify foundational problems.
+- **Critic B — Diverse perspective**: Brings a different analytical lens — catches issues the first critic normalizes past. Prioritizes speed and breadth.
+- **Critic C — Lightweight third view**: A lightweight pass that surfaces observations the deeper analyses may overlook. Often catches inconsistencies and naming/coupling issues.
 
 Read `references/critic-prompt.md` for the prompt template. Each critic gets:
 1. The explanation from Step 1 (so they don't waste time re-exploring)
