@@ -1,11 +1,17 @@
 {
   "name": "how",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Explain how a subsystem works by spawning parallel explorer agents, synthesizing findings into a clear architectural explanation, and optionally running an architectural critique pass.",
   "author": {
     "name": "Lauren Tan"
   },
   "repository": "https://github.com/poteto/how",
-  "keywords": ["explanation", "architecture", "code-review", "onboarding", "exploration"],
+  "keywords": [
+    "explanation",
+    "architecture",
+    "code-review",
+    "onboarding",
+    "exploration"
+  ],
   "license": "MIT"
 }
