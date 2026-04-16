@@ -1,6 +1,6 @@
-# How — a Cursor skill for explaining codebases
+# How — a skill for explaining codebases
 
-A Cursor plugin that adds the `/how` skill: ask how a subsystem, feature, or flow works, and the agent produces a clear architectural explanation at the level of a senior engineer onboarding onto a new area.
+A plugin for Cursor and Claude Code that adds the `/how` skill: ask how a subsystem, feature, or flow works, and the agent produces a clear architectural explanation at the level of a senior engineer onboarding onto a new area.
 
 ## What it does
 
@@ -23,9 +23,18 @@ For complex questions that span multiple files or services, the skill decomposes
 ```text
 how/
 ├── .cursor-plugin/
-│   └── plugin.json
+│   └── plugin.json          # Cursor manifest
+├── .claude-plugin/
+│   └── plugin.json          # Claude Code manifest
 └── skills/
-    └── how/
+    ├── how/                  # Cursor skill
+    │   ├── SKILL.md
+    │   └── references/
+    │       ├── explainer-prompt.md
+    │       ├── explorer-prompt.md
+    │       ├── critic-prompt.md
+    │       └── critique-rubric.md
+    └── how-claude/           # Claude Code skill
         ├── SKILL.md
         └── references/
             ├── explainer-prompt.md
@@ -35,6 +44,20 @@ how/
 ```
 
 `SKILL.md` contains the top-level routing logic (simple vs. complex, explain vs. critique). The `references/` folder holds the prompt templates that the agent hands to each subagent, plus the critique rubric used during the critique pass.
+
+### Model differences
+
+The Cursor skill uses multi-model dispatching (`gpt-5.4`, `composer-2`, `claude-opus-4.6`). The Claude Code skill uses Claude-native models (`sonnet`, `opus`, `haiku`) which are the only values accepted by the Claude Code Agent tool.
+
+## Installation
+
+### Cursor
+
+Install as a Cursor plugin — the `.cursor-plugin/` manifest is picked up automatically.
+
+### Claude Code
+
+Install the plugin directory locally. The `.claude-plugin/` manifest enables auto-discovery of the `how-claude` skill.
 
 ## License
 
